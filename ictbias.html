@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICTbias.com - Trading Signals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .signal-display {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .signal-display.buy {
+            border-color: #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .signal-display.sell {
+            border-color: #ef4444;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .signal-display.neutral {
+            border-color: #64748b;
+        }
+
+        .signal-label {
+            font-size: 1.2em;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .signal-value {
+            font-size: 4em;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .signal-value.buy {
+            color: #10b981;
+        }
+
+        .signal-value.sell {
+            color: #ef4444;
+        }
+
+        .signal-value.neutral {
+            color: #64748b;
+        }
+
+        .timestamp {
+            color: #64748b;
+            font-size: 0.9em;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-title {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lock-icon {
+            font-size: 0.8em;
+        }
+
+        .password-section {
+            margin-bottom: 30px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1em;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.2);
+        }
+
+        .unlock-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            color: #fff;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .unlock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+        }
+
+        .controls {
+            display: none;
+        }
+
+        .controls.active {
+            display: block;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .signal-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .signal-btn {
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signal-btn.buy-btn {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .signal-btn.buy-btn:hover, .signal-btn.buy-btn.active {
+            background: #10b981;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .signal-btn.sell-btn {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .signal-btn.sell-btn:hover, .signal-btn.sell-btn.active {
+            background: #ef4444;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .signal-btn.neutral-btn {
+            border-color: #64748b;
+            color: #64748b;
+        }
+
+        .signal-btn.neutral-btn:hover, .signal-btn.neutral-btn.active {
+            background: #64748b;
+            color: #fff;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            background: rgba(0, 0, 0, 0.3);
+            color: #ef4444;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .signal-value {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ICTbias.com</h1>
+            <p class="subtitle">Live Trading Signals Dashboard</p>
+        </header>
+
+        <div class="main-content">
+            <div class="signal-display neutral" id="buySignal">
+                <div class="signal-label">Buy Signal</div>
+                <div class="signal-value neutral" id="buyValue">NEUTRAL</div>
+                <div class="timestamp" id="buyTimestamp">--</div>
+            </div>
+
+            <div class="signal-display neutral" id="sellSignal">
+                <div class="signal-label">Sell Signal</div>
+                <div class="signal-value neutral" id="sellValue">NEUTRAL</div>
+                <div class="timestamp" id="sellTimestamp">--</div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="control-title">
+                <span class="lock-icon">🔒</span>
+                Admin Control Panel
+            </div>
+
+            <div class="password-section" id="passwordSection">
+                <input 
+                    type="password" 
+                    class="password-input" 
+                    id="passwordInput" 
+                    placeholder="Enter admin password"
+                    onkeypress="if(event.key === 'Enter') unlockPanel()"
+                >
+                <button class="unlock-btn" onclick="unlockPanel()">Unlock Panel</button>
+                <div class="error-message" id="errorMessage">Incorrect password. Please try again.</div>
+            </div>
+
+            <div class="controls" id="controls">
+                <div class="control-group">
+                    <label class="control-label">Set Buy Signal</label>
+                    <div class="signal-buttons">
+                        <button class="signal-btn buy-btn" onclick="setSignal('buy', 'ACTIVE')">ACTIVE</button>
+                        <button class="signal-btn neutral-btn active" onclick="setSignal('buy', 'NEUTRAL')">NEUTRAL</button>
+                        <button class="signal-btn sell-btn" onclick="setSignal('buy', 'INACTIVE')">INACTIVE</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Set Sell Signal</label>
+                    <div class="signal-buttons">
+                        <button class="signal-btn buy-btn" onclick="setSignal('sell', 'ACTIVE')">ACTIVE</button>
+                        <button class="signal-btn neutral-btn active" onclick="setSignal('sell', 'NEUTRAL')">NEUTRAL</button>
+                        <button class="signal-btn sell-btn" onclick="setSignal('sell', 'INACTIVE')">INACTIVE</button>
+                    </div>
+                </div>
+
+                <button class="logout-btn" onclick="lockPanel()">🔒 Lock Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default password (you should change this!)
+        const ADMIN_PASSWORD = 'admin123';
+
+        // Load saved signals from localStorage
+        function loadSignals() {
+            const buySignal = localStorage.getItem('buySignal') || 'NEUTRAL';
+            const sellSignal = localStorage.getItem('sellSignal') || 'NEUTRAL';
+            const buyTime = localStorage.getItem('buyTimestamp');
+            const sellTime = localStorage.getItem('sellTimestamp');
+
+            updateDisplay('buy', buySignal, buyTime);
+            updateDisplay('sell', sellSignal, sellTime);
+        }
+
+        function unlockPanel() {
+            const password = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('passwordSection').style.display = 'none';
+                document.getElementById('controls').classList.add('active');
+                document.getElementById('passwordInput').value = '';
+                errorMessage.classList.remove('show');
+            } else {
+                errorMessage.classList.add('show');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function lockPanel() {
+            document.getElementById('passwordSection').style.display = 'block';
+            document.getElementById('controls').classList.remove('active');
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function setSignal(type, status) {
+            const timestamp = new Date().toLocaleString();
+            
+            // Save to localStorage
+            localStorage.setItem(`${type}Signal`, status);
+            localStorage.setItem(`${type}Timestamp`, timestamp);
+
+            // Update display
+            updateDisplay(type, status, timestamp);
+
+            // Update button states
+            updateButtonStates(type, status);
+        }
+
+        function updateDisplay(type, status, timestamp) {
+            const displayElement = document.getElementById(`${type}Signal`);
+            const valueElement = document.getElementById(`${type}Value`);
+            const timestampElement = document.getElementById(`${type}Timestamp`);
+
+            // Remove all classes
+            displayElement.classList.remove('buy', 'sell', 'neutral');
+            valueElement.classList.remove('buy', 'sell', 'neutral');
+
+            // Add appropriate class based on status
+            if (status === 'ACTIVE') {
+                displayElement.classList.add('buy');
+                valueElement.classList.add('buy');
+            } else if (status === 'INACTIVE') {
+                displayElement.classList.add('sell');
+                valueElement.classList.add('sell');
+            } else {
+                displayElement.classList.add('neutral');
+                valueElement.classList.add('neutral');
+            }
+
+            valueElement.textContent = status;
+            timestampElement.textContent = timestamp ? `Last updated: ${timestamp}` : '--';
+        }
+
+        function updateButtonStates(type, status) {
+            const buttons = document.querySelectorAll(`[onclick*="${type}"]`);
+            buttons.forEach(button => {
+                button.classList.remove('active');
+                if (button.textContent === status) {
+                    button.classList.add('active');
+                }
+            });
+        }
+
+        // Load signals on page load
+        window.addEventListener('DOMContentLoaded', loadSignals);
+    </script>
+</body>
+</html>
